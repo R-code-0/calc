@@ -1,5 +1,6 @@
 public class Calculator {
-    private int a, b, x, out;
+    private int a;
+    private int b;
     private boolean obs;
     private char op;
 
@@ -8,9 +9,9 @@ public class Calculator {
         if (input.replaceAll("\\D", "").length() == 0) obs = true;
         System.out.println(obs);
         char[] ch = {'+', '-', '*', '/'};
-        x = -1;
-        for (int i = 0; i < ch.length; i++) {
-            x = input.indexOf(ch[i]);
+        int x = -1;
+        for (char c : ch) {
+            x = input.indexOf(c);
             if (x != -1) break;
         }
         if (x == -1) {
@@ -69,20 +70,45 @@ public class Calculator {
 
     public String intToRoman(int s) {
         if (s == 100) return "C";
-        StringBuilder str = new StringBuilder("");
+        StringBuilder str = new StringBuilder();
+        if (s < 0) {
+            str.append('-');
+            s = -s;
+        }
         while (s != 0) {
             if (s >= 50) {
-                str.append('C');
-                s -= 50;
+                if (s >= 90) {
+                    str.append("XC");
+                    s -= 90;
+                }
+                else {
+                    str.append('L');
+                    s -= 50;
+                }
             } else if (s >= 10) {
-                str.append('X');
-                s -= 10;
+                if (s >= 40) {
+                    str.append("XL");
+                    s -= 40;
+                } else {
+                    str.append('X');
+                    s -= 10;
+                }
             } else if (s >= 5) {
-                str.append('V');
-                s -= 5;
+                if (s == 9) {
+                    str.append("IX");
+                    s -= 9;
+                } else {
+                    str.append('V');
+                    s -= 5;
+                }
             } else if (s >= 1) {
-                str.append('I');
-                s -= 1;
+                if (s == 4) {
+                    str.append("IV");
+                    s -= 4;
+                } else {
+                    str.append('I');
+                    s -= 1;
+                }
             }
         }
         return str.toString();
@@ -95,13 +121,13 @@ public class Calculator {
                 case '+' -> out(a + b);
                 case '-' -> out(a - b);
                 case '*' -> out(a * b);
-                case '/' -> out((double) a / b);
+                case '/' -> out(a / b);
             }
         } else throw new ArithmeticException("Incorrect value. 0<value<=10");
     }
 
-    private void out(Number out) {
-        if (obs) System.out.println(intToRoman((Integer) out));
+    private void out(int out) {
+        if (obs) System.out.println(intToRoman(out));
         else System.out.println(out);
     }
 }
