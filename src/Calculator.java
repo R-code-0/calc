@@ -1,13 +1,13 @@
+import java.util.HashMap;
+
 public class Calculator {
-    private int a;
-    private int b;
+    private String ra, rb;
+    private int a, b;
     private boolean obs;
     private char op;
 
     public void in(String input) {
         input = input.replaceAll(" ", "").toUpperCase();
-        if (input.replaceAll("\\D", "").length() == 0) obs = true;
-        System.out.println(obs);
         char[] ch = {'+', '-', '*', '/'};
         int x = -1;
         for (char c : ch) {
@@ -15,15 +15,20 @@ public class Calculator {
             if (x != -1) break;
         }
         if (x == -1) {
-            throw new ArithmeticException("Error. Unknown operand. not +, -, *, /");
+            throw new ArithmeticException("Error: unknown operand. not +, -, *, /");
+        }
+        if (input.replaceAll("\\D", "").length() == 0) {
+            obs = true;
+            ra = input.substring(0, x);
+            rb = input.substring(x + 1);
         }
         op = input.charAt(x);
-        a = obs ? romanToInt(input.substring(0, x)) : Integer.parseInt(input.substring(0, x));
-        b = obs ? romanToInt(input.substring(x + 1)) : Integer.parseInt(input.substring(x + 1));
+        a = obs ? romanToInt(ra) : Integer.parseInt(input.substring(0, x));
+        b = obs ? romanToInt(rb) : Integer.parseInt(input.substring(x + 1));
         calculate();
     }
 
-    public int romanToInt(String s) {
+    private int romanToInt(String s) {
         int r = 0;
         for (int i = 0; i < s.length(); i++) {
             switch (s.charAt(i)) {
@@ -63,52 +68,61 @@ public class Calculator {
                     } else r += 500;
                 }
                 case 'M' -> r += 1000;
+                default -> throw new RuntimeException("Error: invalid roman number");
             }
         }
         return r;
     }
 
-    public String intToRoman(int s) {
-        if (s == 100) return "C";
+    private String intToRoman(int num) {
+        HashMap<Integer, String> db = new HashMap<>();
+        db.put(1, "I");
+        db.put(4, "IV");
+        db.put(5, "V");
+        db.put(6, "VI");
+        db.put(9, "IX");
+        db.put(10, "X");
+        db.put(40, "XL");
+        db.put(50, "L");
+        db.put(60, "LX");
+        db.put(90, "XC");
+        db.put(100, "C");
         StringBuilder str = new StringBuilder();
-        if (s < 0) {
+        if (num < 0) {
             str.append('-');
-            s = -s;
+            num = -num;
         }
-        while (s != 0) {
-            if (s >= 50) {
-                if (s >= 90) {
-                    str.append("XC");
-                    s -= 90;
-                }
-                else {
-                    str.append('L');
-                    s -= 50;
-                }
-            } else if (s >= 10) {
-                if (s >= 40) {
-                    str.append("XL");
-                    s -= 40;
-                } else {
-                    str.append('X');
-                    s -= 10;
-                }
-            } else if (s >= 5) {
-                if (s == 9) {
-                    str.append("IX");
-                    s -= 9;
-                } else {
-                    str.append('V');
-                    s -= 5;
-                }
-            } else if (s >= 1) {
-                if (s == 4) {
-                    str.append("IV");
-                    s -= 4;
-                } else {
-                    str.append('I');
-                    s -= 1;
-                }
+        while (num != 0) {
+            if (num >= 100) {
+                str.append(db.get(100));
+                num -= 100;
+            } else if (num >= 90) {
+                str.append(db.get(90));
+                num -= 90;
+            } else if (num >= 60) {
+                str.append(db.get(60));
+                num -= 60;
+            } else if (num >= 50) {
+                str.append(db.get(50));
+                num -= 50;
+            } else if (num >= 10) {
+                str.append(db.get(10));
+                num -= 10;
+            } else if (num == 9) {
+                str.append(db.get(9));
+                num -= 9;
+            } else if (num >= 6) {
+                str.append(db.get(6));
+                num -= 6;
+            } else if (num == 5) {
+                str.append(db.get(5));
+                num -= 5;
+            } else if (num == 4) {
+                str.append(db.get(4));
+                num -= 4;
+            } else if (num >= 1) {
+                str.append(db.get(1));
+                num -= 1;
             }
         }
         return str.toString();
@@ -123,11 +137,11 @@ public class Calculator {
                 case '*' -> out(a * b);
                 case '/' -> out(a / b);
             }
-        } else throw new ArithmeticException("Incorrect value. 0<value<=10");
+        } else throw new ArithmeticException("Error: incorrect value. 0<value<=10");
     }
 
     private void out(int out) {
-        if (obs) System.out.println(intToRoman(out));
-        else System.out.println(out);
+        if (obs) System.out.printf("%s%s%s=%s\n", ra, op, rb, intToRoman(out));
+        else System.out.printf("%d%s%d=%d\n", a, op, b, out);
     }
 }
