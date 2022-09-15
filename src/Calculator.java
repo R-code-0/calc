@@ -1,4 +1,5 @@
-import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 
 public class Calculator {
     private String ra, rb;
@@ -75,54 +76,29 @@ public class Calculator {
     }
 
     private String intToRoman(int num) {
-        HashMap<Integer, String> db = new HashMap<>();
-        db.put(1, "I");
-        db.put(4, "IV");
-        db.put(5, "V");
-        db.put(6, "VI");
-        db.put(9, "IX");
-        db.put(10, "X");
-        db.put(40, "XL");
-        db.put(50, "L");
-        db.put(60, "LX");
-        db.put(90, "XC");
+        LinkedHashMap<Integer, String> db = new LinkedHashMap<>();
         db.put(100, "C");
+        db.put(90, "XC");
+        db.put(50, "L");
+        db.put(40, "XL");
+        db.put(10, "X");
+        db.put(9, "IX");
+        db.put(5, "V");
+        db.put(4, "IV");
+        db.put(1, "I");
+        LinkedHashSet<Integer> dbk = new LinkedHashSet<>(db.keySet());
         StringBuilder str = new StringBuilder();
         if (num < 0) {
             str.append('-');
             num = -num;
         }
         while (num != 0) {
-            if (num >= 100) {
-                str.append(db.get(100));
-                num -= 100;
-            } else if (num >= 90) {
-                str.append(db.get(90));
-                num -= 90;
-            } else if (num >= 60) {
-                str.append(db.get(60));
-                num -= 60;
-            } else if (num >= 50) {
-                str.append(db.get(50));
-                num -= 50;
-            } else if (num >= 10) {
-                str.append(db.get(10));
-                num -= 10;
-            } else if (num == 9) {
-                str.append(db.get(9));
-                num -= 9;
-            } else if (num >= 6) {
-                str.append(db.get(6));
-                num -= 6;
-            } else if (num == 5) {
-                str.append(db.get(5));
-                num -= 5;
-            } else if (num == 4) {
-                str.append(db.get(4));
-                num -= 4;
-            } else if (num >= 1) {
-                str.append(db.get(1));
-                num -= 1;
+            for (Integer integer : dbk) {
+                if (num >= integer) {
+                    str.append(db.get(integer));
+                    num -= integer;
+                    break;
+                }
             }
         }
         return str.toString();
