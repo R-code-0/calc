@@ -1,5 +1,4 @@
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 
 public class Calculator {
     private String ra, rb;
@@ -86,14 +85,13 @@ public class Calculator {
         db.put(5, "V");
         db.put(4, "IV");
         db.put(1, "I");
-        LinkedHashSet<Integer> dbk = new LinkedHashSet<>(db.keySet());
         StringBuilder str = new StringBuilder();
         if (num < 0) {
             str.append('-');
             num = -num;
         }
         while (num != 0) {
-            for (Integer integer : dbk) {
+            for (Integer integer : db.keySet()) {
                 if (num >= integer) {
                     str.append(db.get(integer));
                     num -= integer;
